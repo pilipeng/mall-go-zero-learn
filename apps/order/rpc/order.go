@@ -7,7 +7,7 @@ import (
 	"mall-go-zero-learn.com/apps/order/rpc/internal/config"
 	"mall-go-zero-learn.com/apps/order/rpc/internal/server"
 	"mall-go-zero-learn.com/apps/order/rpc/internal/svc"
-	"mall-go-zero-learn.com/apps/order/rpc/rpc"
+	"mall-go-zero-learn.com/apps/order/rpc/order"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/service"
@@ -16,7 +16,7 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-var configFile = flag.String("f", "etc/rpc.yaml", "the config file")
+var configFile = flag.String("f", "etc/order.yaml", "the config file")
 
 func main() {
 	flag.Parse()
@@ -24,10 +24,10 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 	ctx := svc.NewServiceContext(c)
-	svr := server.NewRpcServer(ctx)
+	svr := server.NewOrderServer(ctx)
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		rpc.RegisterRpcServer(grpcServer, svr)
+		order.RegisterOrderServer(grpcServer, svr)
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)
